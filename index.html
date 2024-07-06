@@ -87,50 +87,11 @@
       text-align: center;
       width: 100%;
     }
-
-    .help-icon {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      font-size: 2em;
-      cursor: pointer;
-    }
-
-    .help-modal {
-      display: none;
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background-color: white;
-      color: black;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-      max-width: 80%;
-      max-height: 80%;
-      overflow-y: auto;
-      z-index: 1000;
-    }
-
-    .help-modal p {
-      font-size: 1.2em;
-      margin: 10px 0;
-    }
-
-    .modal-close {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      cursor: pointer;
-      font-size: 1.5em;
-    }
   </style>
 </head>
 
 <body>
   <div class="title">수능 시험 도우미</div>
-  <div class="help-icon" onclick="toggleHelp()">❓</div>
   <div class="container">
     <div class="schedule">
       <h2>시험 시간표</h2>
@@ -139,6 +100,11 @@
         <li onclick="setTime(10, 30, 100)">수학: 10:30 - 12:10</li>
         <li onclick="setTime(13, 10, 70)">영어: 13:10 - 14:20</li>
         <li onclick="setTime(14, 50, 107)">한국사, 탐구(사회·과학·직업): 14:50 - 16:37</li>
+        <li onclick="setTime(14, 50, 30)">한국사: 14:50 - 15:20</li>
+        <li onclick="setTime(15, 20, 15)">탐구 영역 문항지 배부: 15:20 - 15:35</li>
+        <li onclick="setTime(15, 35, 30)">탐구1: 15:35 - 16:05</li>
+        <li onclick="setTime(16, 5, 2)">문제지 회수: 16:05 - 16:07</li>
+        <li onclick="setTime(16, 7, 30)">탐구2: 16:07 - 16:37</li>
         <li onclick="setTime(17, 5, 40)">제2외국어/한문: 17:05 - 17:45</li>
       </ul>
     </div>
@@ -147,13 +113,6 @@
     </div>
   </div>
   <div id="countdown" class="countdown">3</div>
-  <div id="help-modal" class="help-modal">
-    <span class="modal-close" onclick="toggleHelp()">✖</span>
-    <h2>도움말</h2>
-    <p>이 프로그램은 수능 시험을 대비하여 학생들이 시험 시간을 관리할 수 있도록 돕습니다.</p>
-    <p>각 과목을 클릭하면 해당 과목의 시작 시간으로 시계가 맞춰지고, 3초의 카운트다운 후 시간이 흐르기 시작합니다.</p>
-    <p>각 시험이 끝나기 2분 전에 배경색이 노란색으로 바뀌었다가 시험이 끝나면 다시 초록색으로 돌아옵니다.</p>
-  </div>
   <script>
     const canvas = document.getElementById('canvas');
     const context = canvas.getContext('2d');
@@ -165,12 +124,10 @@
     let countdownTimer;
     let clockInterval;
     let countdownInterval;
-    let backgroundChangeTimer;
 
     function setTime(hour, minute, durationInMinutes) {
       clearInterval(countdownTimer);
       clearInterval(clockInterval);
-      clearInterval(backgroundChangeTimer);
       clearInterval(countdownInterval);
       document.body.style.backgroundColor = '#2b4f2e'; // 기본 배경색으로 재설정
       offset = (hour % 12) * 3600 + minute * 60;
@@ -193,17 +150,9 @@
 
     function startClock() {
       clearInterval(clockInterval);
-      let elapsed = 0;
       clockInterval = setInterval(() => {
-        elapsed += 1;
         offset += 1;
         drawClock();
-        if (duration - elapsed <= 120 && duration - elapsed > 0) {
-          document.body.style.backgroundColor = 'yellow'; // 시험 종료 2분 전 노란색으로 변경
-        } else if (duration - elapsed <= 0) {
-          document.body.style.backgroundColor = '#2b4f2e'; // 시험 종료 후 다시 초록색으로 변경
-          clearInterval(clockInterval);
-        }
       }, 1000);
     }
 
@@ -278,15 +227,6 @@
       context.lineTo(0, -length);
       context.stroke();
       context.rotate(-pos);
-    }
-
-    function toggleHelp() {
-      const helpModal = document.getElementById('help-modal');
-      if (helpModal.style.display === 'block') {
-        helpModal.style.display = 'none';
-      } else {
-        helpModal.style.display = 'block';
-      }
     }
 
     setInterval(drawClock, 1000);
